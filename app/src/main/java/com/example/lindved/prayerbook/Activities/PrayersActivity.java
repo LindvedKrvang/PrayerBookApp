@@ -30,6 +30,7 @@ public class PrayersActivity extends AppCompatActivity {
 
     private ListView lstPrayers;
     private Button btnGetPrayers;
+    private Button btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,7 @@ public class PrayersActivity extends AppCompatActivity {
         setContentView(R.layout.activity_prayers);
         Log.v("TEST", "Creating PrayersActivity");
         initialize();
+        getPrayers();
     }
 
     private void initialize() {
@@ -46,6 +48,13 @@ public class PrayersActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 getPrayers();
+            }
+        });
+        btnBack = (Button) findViewById(R.id.btnPrayersBack);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }
@@ -109,5 +118,10 @@ public class PrayersActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onBackPressed(){
+        finish();
     }
 }

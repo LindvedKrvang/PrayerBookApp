@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnGetAllPrayers;
     Button btnCreateNewPrayer;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +35,17 @@ public class MainActivity extends AppCompatActivity {
                 goToPrayersActivity();
             }
         });
+        btnCreateNewPrayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToCreateNewPrayer();
+            }
+        });
+    }
+
+    private void goToCreateNewPrayer() {
+        Intent intent = new Intent(this, CreateNewPrayerActivity.class);
+        startActivity(intent);
     }
 
     private void goToPrayersActivity(){
