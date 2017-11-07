@@ -26,7 +26,7 @@ import okhttp3.Response;
 
 public class PrayersActivity extends AppCompatActivity {
 
-    private static String prayersURL = "http://prayerbook.azurewebsites.net/api/prayers";
+//    private static String prayersURL = "http://prayerbook.azurewebsites.net/api/prayers";
 
     private ListView lstPrayers;
     private Button btnGetPrayers;
@@ -63,7 +63,7 @@ public class PrayersActivity extends AppCompatActivity {
         if(isNetworkAvailable()){
 
             OkHttpClient client = new OkHttpClient();
-            final Request request = new Request.Builder().url(prayersURL).build();
+            final Request request = new Request.Builder().url(getString(R.string.prayerURL)).build();
 
             Call call = client.newCall(request);
             call.enqueue(new Callback() {

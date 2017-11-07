@@ -1,5 +1,6 @@
 package com.example.lindved.prayerbook.Activities;
 
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
@@ -8,8 +9,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.lindved.prayerbook.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -22,7 +27,7 @@ import okhttp3.Response;
 public class CreateNewPrayerActivity extends AppCompatActivity {
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private static final String prayerURL = "http://prayerbook.azurewebsites.net/api/prayers";
+//    private static final String prayerURL = "http://prayerbook.azurewebsites.net/api/prayers";
 
     private Button btnCreatePrayer;
     private EditText txtSubject;
@@ -31,6 +36,8 @@ public class CreateNewPrayerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_prayer);
+
+        Log.v("TEST", getString(R.string.prayerURL));
 
         initialize();
         setListeners();
@@ -41,34 +48,57 @@ public class CreateNewPrayerActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
-                try {
-                    createPrayer();
-                    Log.v("TEST", "No exceptions thrown while creating prayer");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        createPrayer();
+                    }
+                }).start();
             }
         });
     }
 
     private String getSubject(){
+        //TODO RKL: Make validating so there are always are content in the subject.
         String subject = txtSubject.getText().toString();
-        String json =  "{\"subject\": \"" + subject + "\"}";
-        return json;
+        return subject;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private void createPrayer() throws IOException {
+    private void createPrayer() {
         OkHttpClient client = new OkHttpClient();
 
-        RequestBody body = RequestBody.create(JSON, getSubject());
-        Log.v("TEST", body.contentType().toString());
-        Request request = new Request.Builder().url(prayerURL)
-                .post(body).build();
-        Log.v("TEST", request.body().toString() + " " + request.headers().toString());
-//        Response response = client.newCall(request).execute();
-//            Log.v("TEST", response.body().toString());
-//
+        JSONObject prayer = new JSONObject();
+        try {
+            prayer.put("subject", getSubject());
+        } catch (JSONException e) {
+            Log.v("TEST", "Create JSON exception");
+            e.printStackTrace();
+        }
+        RequestBody body = RequestBody.create(JSON, prayer.toString());
+        Log.v("TEST", "RequestBody created");
+
+        Request request = new Request.Builder().url(getString(R.string.prayerURL)).post(body).build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            Log.v("TEST", "Request done. Got the response");
+            Log.v("TEST", response.body().string());
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    txtSubject.getText().clear();
+                    showCreateCompleteMessage();
+                }
+            });
+        } catch (IOException e) {
+            Log.v("TEST", "Exception while doing request");
+            e.printStackTrace();
+        }
+    }
+
+    private void showCreateCompleteMessage() {
+        Toast toast = Toast.makeText(this, "Successfully created prayer!", Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     private void initialize() {
