@@ -1,23 +1,29 @@
 package com.example.lindved.prayerbook.Entities;
 
+import java.io.Serializable;
+
 /**
  * Created by Lindved on 05-11-2017.
  */
 
-public class Prayer {
+public class Prayer implements Serializable {
 
-    private int id;
-    private String subject;
+    private int mId;
+    private String mSubject;
 
     public int getId(){
-        return id;
+        return mId;
     }
 
     public String getSubject(){
-        return subject;
+        return mSubject;
+    }
+
+    public void setId(int id){
+        mId = id;
     }
 
     public void setSubject(String subject){
-        this.subject = subject;
+        mSubject = subject;
     }
 }

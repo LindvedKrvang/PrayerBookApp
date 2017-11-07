@@ -1,20 +1,24 @@
 package com.example.lindved.prayerbook.Activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.lindved.prayerbook.Adapters.PrayerAdapter;
+import com.example.lindved.prayerbook.Entities.Prayer;
 import com.example.lindved.prayerbook.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -31,6 +35,7 @@ public class PrayersActivity extends AppCompatActivity {
     private ListView lstPrayers;
     private Button btnGetPrayers;
     private Button btnBack;
+    private PrayerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +48,17 @@ public class PrayersActivity extends AppCompatActivity {
 
     private void initialize() {
         lstPrayers = (ListView) findViewById(R.id.lstPrayers);
+        lstPrayers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Prayer prayer = (Prayer) parent.getItemAtPosition(position);
+
+                Log.v("TEST", prayer.getSubject());
+
+                goToSinglePrayerActivity(prayer);
+            }
+        });
+
         btnGetPrayers = (Button) findViewById(R.id.btnGetPrayers);
         btnGetPrayers.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +73,12 @@ public class PrayersActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void goToSinglePrayerActivity(Prayer prayer) {
+        Intent intent = new Intent(this, SinglePrayerActivity.class);
+        intent.putExtra("Prayer", prayer);
+        startActivity(intent);
     }
 
     private void getPrayers(){
@@ -103,7 +125,7 @@ public class PrayersActivity extends AppCompatActivity {
         JSONArray prayers = new JSONArray(jsonData);
         Log.v("TEST", "TEST");
 
-        PrayerAdapter adapter = new PrayerAdapter(this, prayers);
+        adapter = new PrayerAdapter(this, prayers);
         lstPrayers.setAdapter(adapter);
     }
 
