@@ -59,7 +59,7 @@ public class CreateNewPrayerActivity extends AppCompatActivity {
     }
 
     private String getSubject(){
-        //TODO RKL: Make validating so there are always are content in the subject.
+        //TODO RKL: Make validating so there always are content in the subject.
         String subject = txtSubject.getText().toString();
         return subject;
     }
