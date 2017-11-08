@@ -46,6 +46,12 @@ public class PrayersActivity extends AppCompatActivity {
         getPrayers();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getPrayers();
+    }
+
     private void initialize() {
         lstPrayers = (ListView) findViewById(R.id.lstPrayers);
         lstPrayers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
