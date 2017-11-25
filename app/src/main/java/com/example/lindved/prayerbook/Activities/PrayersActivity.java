@@ -83,7 +83,7 @@ public class PrayersActivity extends AppCompatActivity {
 
     private void goToSinglePrayerActivity(Prayer prayer) {
         Intent intent = new Intent(this, SinglePrayerActivity.class);
-        intent.putExtra("Prayer", prayer);
+        intent.putExtra("ID", prayer.getId());
         startActivity(intent);
     }
 
@@ -106,7 +106,7 @@ public class PrayersActivity extends AppCompatActivity {
                     final String jsonData = response.body().string();
                     Log.v("TEST", jsonData);
                     if(response.isSuccessful()){
-                        Log.v("TEST", "Response is succesfull");
+                        Log.v("TEST", "Response is successful");
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
