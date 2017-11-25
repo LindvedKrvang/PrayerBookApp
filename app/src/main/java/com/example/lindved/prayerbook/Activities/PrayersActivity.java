@@ -129,7 +129,6 @@ public class PrayersActivity extends AppCompatActivity {
 
     private void displayPrayers(String jsonData) throws JSONException {
         JSONArray prayers = new JSONArray(jsonData);
-        Log.v("TEST", "TEST");
 
         adapter = new PrayerAdapter(this, prayers);
         lstPrayers.setAdapter(adapter);

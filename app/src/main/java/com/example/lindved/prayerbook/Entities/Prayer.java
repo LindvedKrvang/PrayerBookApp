@@ -2,6 +2,8 @@ package com.example.lindved.prayerbook.Entities;
 
 import android.util.Log;
 
+import com.example.lindved.prayerbook.R;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,10 +43,12 @@ public class Prayer implements Serializable {
     }
 
     public void addResponse(String responsesString){
+        Log.v("TEST", "Using the JSONArray overload");
         try {
             JSONArray array = new JSONArray(responsesString);
             for (int i = 0; i < array.length(); i++){
                 JSONObject object = array.getJSONObject(i);
+                //TODO RKL: Refactor this to be used by both overloads.
                 Response response = new Response();
                 response.setId(object.getInt("id"));
                 response.setAnswer(object.getString("answer"));
@@ -52,7 +56,22 @@ public class Prayer implements Serializable {
                 mResponses.add(response);
             }
         } catch (JSONException e) {
-            Log.e("RESPONSE", "Failed to convert from JSON to Response object while adding response to PrayerResponses");
+            Log.e(String.valueOf(R.string.response), String.valueOf(R.string.error_convert_JSON_Response_in_Prayer));
+            e.printStackTrace();
+        }
+    }
+
+    public void addResponse(JSONObject object){
+        Log.v("TEST", "Using the JSONObject overload");
+        Response response = new Response();
+        try {
+            //TODO RKL: Refactor this to be used by both overloads.
+            response.setId(object.getInt("id"));
+            response.setAnswer(object.getString("answer"));
+            response.setPrayerId(object.getInt("prayerId"));
+            mResponses.add(response);
+        } catch (JSONException e) {
+            Log.e(String.valueOf(R.string.response), String.valueOf(R.string.error_convert_JSON_Response_in_Prayer));
             e.printStackTrace();
         }
     }

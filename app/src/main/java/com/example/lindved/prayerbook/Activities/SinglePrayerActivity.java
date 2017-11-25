@@ -13,12 +13,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.lindved.prayerbook.Adapters.ResponseAdapter;
 import com.example.lindved.prayerbook.Entities.Prayer;
 import com.example.lindved.prayerbook.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,10 +40,13 @@ public class SinglePrayerActivity extends AppCompatActivity {
 
     private Prayer prayer;
 
+    private ListView lstResponses;
     private Button btnBack;
     private Button btnAnswer;
     private TextView txtSubject;
     private ImageView imgTrashcan;
+
+    private ResponseAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +68,7 @@ public class SinglePrayerActivity extends AppCompatActivity {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                //TODO RKL: Alets user about failure.
+                //TODO RKL: Alert user about failure.
             }
 
             @Override
@@ -80,6 +86,7 @@ public class SinglePrayerActivity extends AppCompatActivity {
                         public void run() {
                             Log.v("TEST", prayer.toString());
                             txtSubject.setText(prayer.getSubject());
+                            populateResponseList();
                         }
                     });
                 } catch (JSONException e) {
@@ -88,10 +95,11 @@ public class SinglePrayerActivity extends AppCompatActivity {
 
             }
         });
+    }
 
-
-//        prayer = (Prayer) getIntent().getSerializableExtra("Prayer");
-
+    private void populateResponseList() {
+        adapter = new ResponseAdapter(this, prayer.getResponses());
+        lstResponses.setAdapter(adapter);
     }
 
     private void initialize() {
@@ -121,6 +129,8 @@ public class SinglePrayerActivity extends AppCompatActivity {
 
         txtSubject = findViewById(R.id.txtSinglePrayerSubject);
         txtSubject.setMovementMethod(new ScrollingMovementMethod());
+
+        lstResponses = findViewById(R.id.lstSinglePrayerAnswers);
     }
 
     private void warnDeleteDialog() {
@@ -175,6 +185,7 @@ public class SinglePrayerActivity extends AppCompatActivity {
     }
 
     private void answerDialog(){
+        //TODO RKL: Refactor this method into smaller methods.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
 
@@ -185,7 +196,6 @@ public class SinglePrayerActivity extends AppCompatActivity {
         builder.setView(view).setPositiveButton("Answer", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //TODO RKL: Answer prayer.
                 if(responseText.getText().toString().isEmpty()){
                     //TODO RKL: Make no answer entered message.
                 }else{
@@ -209,13 +219,28 @@ public class SinglePrayerActivity extends AppCompatActivity {
                             try {
                                 Response response1 = client.newCall(request).execute();
                                 Log.v("TEST", "Request done. Got the response");
-                                Log.v("TEST", response1.body().string());
+                                //TODO RKL: Clean up this mess.
+                                JSONObject object = new JSONObject(response1.body().string());
+                                prayer.addResponse(object);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        //TODO RKL: Find a better to solution than repopulate entire list everytime.
+                                        populateResponseList();
+                                    }
+                                });
+
                             } catch (IOException e) {
+                                //TODO RKL: Exception handling
+                                e.printStackTrace();
+                            } catch (JSONException e) {
+                                //TODO RKL: Exception handling.
                                 e.printStackTrace();
                             }
                         }
                     }).start();
                 }
+                //TODO RKL: Find a way to not close the dialog if an error occur.
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
