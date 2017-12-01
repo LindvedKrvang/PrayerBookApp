@@ -43,6 +43,7 @@ public class SinglePrayerActivity extends AppCompatActivity {
     private ListView lstResponses;
     private Button btnBack;
     private Button btnAnswer;
+    private TextView txtAnswerHeadline;
     private TextView txtSubject;
     private ImageView imgTrashcan;
 
@@ -87,6 +88,7 @@ public class SinglePrayerActivity extends AppCompatActivity {
                             Log.v("TEST", prayer.toString());
                             txtSubject.setText(prayer.getSubject());
                             populateResponseList();
+                            setAnswerHeadline();
                         }
                     });
                 } catch (JSONException e) {
@@ -95,6 +97,14 @@ public class SinglePrayerActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void setAnswerHeadline() {
+        if(!prayer.getResponses().isEmpty()){
+            txtAnswerHeadline.setText(R.string.answers);
+        }else{
+            txtAnswerHeadline.setText(R.string.no_responses);
+        }
     }
 
     private void populateResponseList() {
@@ -126,6 +136,8 @@ public class SinglePrayerActivity extends AppCompatActivity {
                 warnDeleteDialog();
             }
         });
+
+        txtAnswerHeadline = findViewById(R.id.txtSinglePrayerAnswerHeader);
 
         txtSubject = findViewById(R.id.txtSinglePrayerSubject);
         txtSubject.setMovementMethod(new ScrollingMovementMethod());

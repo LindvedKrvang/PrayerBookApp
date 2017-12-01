@@ -30,6 +30,7 @@ public class CreateNewPrayerActivity extends AppCompatActivity {
 //    private static final String prayerURL = "http://prayerbook.azurewebsites.net/api/prayers";
 
     private Button btnCreatePrayer;
+    private Button btnBack;
     private EditText txtSubject;
 
     @Override
@@ -54,6 +55,13 @@ public class CreateNewPrayerActivity extends AppCompatActivity {
                         createPrayer();
                     }
                 }).start();
+            }
+        });
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }
@@ -102,8 +110,9 @@ public class CreateNewPrayerActivity extends AppCompatActivity {
     }
 
     private void initialize() {
-        btnCreatePrayer = (Button) findViewById(R.id.btnNewPrayerCreate);
-        txtSubject = (EditText) findViewById(R.id.txtNewPrayerSubject);
+        btnCreatePrayer = findViewById(R.id.btnNewPrayerCreate);
+        btnBack = findViewById(R.id.btnNewPrayerBack);
+        txtSubject = findViewById(R.id.txtNewPrayerSubject);
     }
 
     @Override

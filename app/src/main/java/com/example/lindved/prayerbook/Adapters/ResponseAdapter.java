@@ -48,7 +48,6 @@ public class ResponseAdapter extends BaseAdapter {
         if(view == null){
             view = LayoutInflater.from(mContext).inflate(R.layout.response_list_item, null);
             holder = new ViewHolder();
-            holder.idView = view.findViewById(R.id.txtId);
             holder.answerView = view.findViewById(R.id.txtAnswer);
 
             view.setTag(holder);
@@ -61,12 +60,10 @@ public class ResponseAdapter extends BaseAdapter {
     }
 
     private void createResponseView(ViewHolder holder, Response response){
-        holder.idView.setText(response.getId() + "");
         holder.answerView.setText(response.getAnswer() + "");
     }
 
     private static class ViewHolder{
-        TextView idView;
         TextView answerView;
     }
 }

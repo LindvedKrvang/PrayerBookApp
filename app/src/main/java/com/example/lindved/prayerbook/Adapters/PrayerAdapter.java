@@ -51,10 +51,10 @@ public class PrayerAdapter extends BaseAdapter {
     public Prayer getItem(int position) {
         try{
             JSONObject jsonPrayer =  mJSONPrayers.getJSONObject(position);
-            int id = Integer.parseInt(jsonPrayer.getString("id"));
+            int id = Integer.parseInt(jsonPrayer.getString(mContext.getString(R.string.json_id)));
             Prayer prayer = new Prayer();
             prayer.setId(id);
-            prayer.setSubject(jsonPrayer.getString("subject"));
+            prayer.setSubject(jsonPrayer.getString(mContext.getString(R.string.json_subject)));
             return prayer;
         }catch (JSONException e) {
             e.printStackTrace();
@@ -74,8 +74,7 @@ public class PrayerAdapter extends BaseAdapter {
         if(view == null){
             view = LayoutInflater.from(mContext).inflate(R.layout.prayer_list_item, null);
             holder = new ViewHolder();
-            holder.idView = (TextView) view.findViewById(R.id.txtId);
-            holder.subjectView = (TextView) view.findViewById(R.id.txtSubject);
+            holder.subjectView = view.findViewById(R.id.txtSubject);
 
             view.setTag(holder);
         }else{
@@ -91,12 +90,10 @@ public class PrayerAdapter extends BaseAdapter {
     }
 
     private void createPrayerView(ViewHolder holder, JSONObject prayer) throws JSONException {
-        holder.idView.setText(prayer.getString("id"));
-        holder.subjectView.setText(prayer.getString("subject"));
+        holder.subjectView.setText(prayer.getString(mContext.getString(R.string.json_subject)));
     }
 
-    private static class ViewHolder{
-        TextView idView;
+    private static class ViewHolder{;
         TextView subjectView;
     }
 }
