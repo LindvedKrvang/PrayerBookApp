@@ -1,6 +1,8 @@
 package com.example.lindved.prayerbook.Activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -11,17 +13,25 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
 
 import com.example.lindved.prayerbook.R;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.facebook.login.widget.ProfilePictureView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -31,31 +41,18 @@ public class MainActivity extends AppCompatActivity {
     private Button btnGetAllPrayers;
     private Button btnCreateNewPrayer;
     private LoginButton btnLogin;
-    private TextView txtLoginInfo;
+    private ProfilePictureView profilePictureView;
 
     private CallbackManager mCallbackManager;
+
+    private String mUserId;
+    private String mAuthToken;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //This is for generating the keyHash code programmatically.
-//        try {
-//            PackageInfo info = getPackageManager().getPackageInfo(
-//                    "com.example.lindved.prayerbook",
-//                    PackageManager.GET_SIGNATURES);
-//            for (Signature signature : info.signatures) {
-//                MessageDigest md = MessageDigest.getInstance("SHA");
-//                md.update(signature.toByteArray());
-//                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-//            }
-//        } catch (PackageManager.NameNotFoundException e) {
-//
-//        } catch (NoSuchAlgorithmException e) {
-//
-//        }
 
-//        FacebookSdk.setApplicationId(String.valueOf(R.string.facebook_app_id));
         FacebookSdk.sdkInitialize(getApplicationContext());
         mCallbackManager = CallbackManager.Factory.create();
 
@@ -66,31 +63,49 @@ public class MainActivity extends AppCompatActivity {
         initializeButtons();
         setOnClickListeners();
 
+        setProfilePictureFromLocalStorage();
+    }
+
+    private void setProfilePictureFromLocalStorage() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        String defaultValue = getString(R.string.no_user_id);
+        String userId = sharedPref.getString(getString(R.string.user_id), defaultValue);
+        if(!userId.equals(defaultValue)){
+            profilePictureView.setProfileId(userId);
+        }
     }
 
     private void initializeLogin(){
 
         btnLogin = findViewById(R.id.btnLogin);
-        txtLoginInfo = findViewById(R.id.txtLoginInfo);
+        profilePictureView = findViewById(R.id.profilePic);
 
         btnLogin.setReadPermissions("email", "public_profile", "user_friends");
+
 
         btnLogin.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>(){
 
             @Override
             public void onSuccess(LoginResult loginResult) {
-                txtLoginInfo.setText("User ID: " + loginResult.getAccessToken().getUserId()
-                + "\n" + "Auth Token: " + loginResult.getAccessToken().getToken());
+                mUserId = loginResult.getAccessToken().getUserId();
+                mAuthToken = loginResult.getAccessToken().getToken();
+
+                profilePictureView.setProfileId(mUserId);
+
+                //Saving the userId to localStorage for retrieval later.
+                SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString(getString(R.string.user_id), mUserId);
+                editor.commit();
             }
 
             @Override
             public void onCancel() {
-                txtLoginInfo.setText("Login attempt cancelled.");
+                Log.e("LOGIN", "Login cancelled...");
             }
 
             @Override
             public void onError(FacebookException error) {
-                txtLoginInfo.setText("Login attempt failed.");
                 Log.e("LOGIN", error.getMessage());
             }
         });
@@ -98,13 +113,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void initializeButtons() {
         btnGetAllPrayers = findViewById(R.id.btnGetAllPrayers);
-        btnCreateNewPrayer = (Button) findViewById(R.id.btnCreateNewPrayer);
+        btnCreateNewPrayer = findViewById(R.id.btnCreateNewPrayer);
     }
 
     private void setOnClickListeners(){
