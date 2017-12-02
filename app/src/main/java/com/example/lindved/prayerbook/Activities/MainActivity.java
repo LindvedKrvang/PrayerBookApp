@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -64,6 +65,25 @@ public class MainActivity extends AppCompatActivity {
         setOnClickListeners();
 
         setProfilePictureFromLocalStorage();
+
+        setOnAccesTokenTracker();
+    }
+
+    private void setOnAccesTokenTracker() {
+        AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
+                if(currentAccessToken == null){
+                    //Code for what will happen when the user logs out.
+                    Toast.makeText(getBaseContext(), "You logged out!", Toast.LENGTH_LONG).show();
+                    SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString(getString(R.string.user_id), getString(R.string.no_user_id));
+                    editor.commit();
+                    profilePictureView.setVisibility(View.GONE);
+                }
+            }
+        };
     }
 
     private void setProfilePictureFromLocalStorage() {
@@ -72,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
         String userId = sharedPref.getString(getString(R.string.user_id), defaultValue);
         if(!userId.equals(defaultValue)){
             profilePictureView.setProfileId(userId);
+        }else{
+            profilePictureView.setVisibility(View.GONE);
         }
     }
 
@@ -83,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setReadPermissions("email", "public_profile", "user_friends");
 
 
+
         btnLogin.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>(){
 
             @Override
@@ -91,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 mAuthToken = loginResult.getAccessToken().getToken();
 
                 profilePictureView.setProfileId(mUserId);
+                profilePictureView.setVisibility(View.VISIBLE);
 
                 //Saving the userId to localStorage for retrieval later.
                 SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
