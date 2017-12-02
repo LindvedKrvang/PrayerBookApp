@@ -39,6 +39,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity {
 
+    private TextView txtLoginMessage;
     private Button btnGetAllPrayers;
     private Button btnCreateNewPrayer;
     private LoginButton btnLogin;
@@ -81,6 +82,13 @@ public class MainActivity extends AppCompatActivity {
                     editor.putString(getString(R.string.user_id), getString(R.string.no_user_id));
                     editor.commit();
                     profilePictureView.setVisibility(View.GONE);
+                    btnCreateNewPrayer.setVisibility(View.GONE);
+                    btnGetAllPrayers.setVisibility(View.GONE);
+                    txtLoginMessage.setVisibility(View.VISIBLE);
+                }else{
+                    btnCreateNewPrayer.setVisibility(View.VISIBLE);
+                    btnGetAllPrayers.setVisibility(View.VISIBLE);
+                    txtLoginMessage.setVisibility(View.GONE);
                 }
             }
         };
@@ -92,13 +100,19 @@ public class MainActivity extends AppCompatActivity {
         String userId = sharedPref.getString(getString(R.string.user_id), defaultValue);
         if(!userId.equals(defaultValue)){
             profilePictureView.setProfileId(userId);
+            btnCreateNewPrayer.setVisibility(View.VISIBLE);
+            btnGetAllPrayers.setVisibility(View.VISIBLE);
+            txtLoginMessage.setVisibility(View.GONE);
         }else{
             profilePictureView.setVisibility(View.GONE);
+            btnCreateNewPrayer.setVisibility(View.GONE);
+            btnGetAllPrayers.setVisibility(View.GONE);
+            txtLoginMessage.setVisibility(View.VISIBLE);
         }
     }
 
     private void initializeLogin(){
-
+        txtLoginMessage = findViewById(R.id.txtLoginMessage);
         btnLogin = findViewById(R.id.btnLogin);
         profilePictureView = findViewById(R.id.profilePic);
 
