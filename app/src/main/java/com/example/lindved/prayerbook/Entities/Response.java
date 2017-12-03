@@ -8,6 +8,7 @@ public class Response {
     private int mId;
     private String mAnswer;
     private int mPrayerId;
+    private String mUserId;
 
     public int getId(){
         return mId;
@@ -31,5 +32,13 @@ public class Response {
 
     public void setPrayerId(int prayerId){
         mPrayerId = prayerId;
+    }
+
+    public void setUserId(String userId){
+        mUserId = userId;
+    }
+
+    public String getUserId(){
+        return mUserId;
     }
 }

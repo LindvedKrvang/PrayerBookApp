@@ -62,6 +62,7 @@ public class Prayer implements Serializable {
                 response.setId(object.getInt("id"));
                 response.setAnswer(object.getString("answer"));
                 response.setPrayerId(object.getInt("prayerId"));
+                response.setUserId(object.getString("userId"));
                 mResponses.add(response);
             }
         } catch (JSONException e) {
@@ -78,6 +79,7 @@ public class Prayer implements Serializable {
             response.setId(object.getInt("id"));
             response.setAnswer(object.getString("answer"));
             response.setPrayerId(object.getInt("prayerId"));
+            response.setUserId(object.getString("userId"));
             mResponses.add(response);
         } catch (JSONException e) {
             Log.e(String.valueOf(R.string.response), String.valueOf(R.string.error_convert_JSON_Response_in_Prayer));

@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.lindved.prayerbook.Entities.Response;
 import com.example.lindved.prayerbook.R;
+import com.facebook.login.widget.ProfilePictureView;
 
 import java.util.List;
 
@@ -49,6 +50,7 @@ public class ResponseAdapter extends BaseAdapter {
             view = LayoutInflater.from(mContext).inflate(R.layout.response_list_item, null);
             holder = new ViewHolder();
             holder.answerView = view.findViewById(R.id.txtAnswer);
+            holder.picProfile = view.findViewById(R.id.picProfile);
 
             view.setTag(holder);
         }else{
@@ -61,9 +63,11 @@ public class ResponseAdapter extends BaseAdapter {
 
     private void createResponseView(ViewHolder holder, Response response){
         holder.answerView.setText(response.getAnswer() + "");
+        holder.picProfile.setProfileId(response.getUserId());
     }
 
     private static class ViewHolder{
         TextView answerView;
+        ProfilePictureView picProfile;
     }
 }

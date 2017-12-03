@@ -182,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToPrayersActivity(){
         Intent intent = new Intent(this, PrayersActivity.class);
+        intent.putExtra(getString(R.string.user_id), mUserId);
         startActivity(intent);
     }
 }

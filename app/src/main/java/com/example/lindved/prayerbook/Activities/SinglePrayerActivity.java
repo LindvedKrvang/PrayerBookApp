@@ -2,7 +2,9 @@ package com.example.lindved.prayerbook.Activities;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -40,6 +42,7 @@ import static com.example.lindved.prayerbook.Activities.CreateNewPrayerActivity.
 public class SinglePrayerActivity extends AppCompatActivity {
 
     private Prayer prayer;
+    private String mUserId;
 
     private ListView lstResponses;
     private Button btnBack;
@@ -57,9 +60,9 @@ public class SinglePrayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_single_prayer);
         initialize();
 
+        mUserId = getIntent().getExtras().getString(getString(R.string.user_id));
+
         setPrayer();
-
-
     }
 
     private void setPrayer() {
@@ -225,8 +228,9 @@ public class SinglePrayerActivity extends AppCompatActivity {
                             OkHttpClient client = new OkHttpClient();
                             JSONObject response = new JSONObject();
                             try {
-                                response.put("prayerId", prayer.getId());
-                                response.put("answer", responseText.getText());
+                                response.put(getString(R.string.JSON_prayer_id), prayer.getId());
+                                response.put(getString(R.string.JSON_answer), responseText.getText());
+                                response.put(getString(R.string.JSON_user_id), mUserId);
                             } catch (JSONException e) {
                                 Log.v("TEST", "Create JSON exception");
                                 e.printStackTrace();

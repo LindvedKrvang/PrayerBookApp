@@ -37,11 +37,15 @@ public class PrayersActivity extends AppCompatActivity {
     private Button btnBack;
     private PrayerAdapter adapter;
 
+    private String mUserId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prayers);
-        Log.v("TEST", "Creating PrayersActivity");
+
+        mUserId = getIntent().getExtras().getString(getString(R.string.user_id));
+
         initialize();
         getPrayers();
     }
@@ -83,7 +87,8 @@ public class PrayersActivity extends AppCompatActivity {
 
     private void goToSinglePrayerActivity(Prayer prayer) {
         Intent intent = new Intent(this, SinglePrayerActivity.class);
-        intent.putExtra("ID", prayer.getId());
+        intent.putExtra(getString(R.string.ID), prayer.getId());
+        intent.putExtra(getString(R.string.user_id), mUserId);
         startActivity(intent);
     }
 
