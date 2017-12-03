@@ -1,5 +1,6 @@
 package com.example.lindved.prayerbook.Activities;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -33,13 +34,16 @@ public class CreateNewPrayerActivity extends AppCompatActivity {
     private Button btnBack;
     private EditText txtSubject;
 
+    private String mUserId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_prayer);
 
-        Log.v("TEST", getString(R.string.prayerURL));
+        mUserId = getIntent().getExtras().getString(getString(R.string.user_id));
 
+        Log.v("TEST", "This is the userId parsed from the intent: " + mUserId);
         initialize();
         setListeners();
     }
@@ -75,9 +79,19 @@ public class CreateNewPrayerActivity extends AppCompatActivity {
     private void createPrayer() {
         OkHttpClient client = new OkHttpClient();
 
+//        String userId;
+//        try {
+//            userId = loadUserId();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            //TODO RKL: Notice user about error.
+//            return;
+//        }
+
         JSONObject prayer = new JSONObject();
         try {
-            prayer.put("subject", getSubject());
+            prayer.put(getString(R.string.json_subject), getSubject());
+            prayer.put(getString(R.string.user_id), mUserId);
         } catch (JSONException e) {
             Log.v("TEST", "Create JSON exception");
             e.printStackTrace();
@@ -102,6 +116,17 @@ public class CreateNewPrayerActivity extends AppCompatActivity {
             Log.v("TEST", "Exception while doing request");
             e.printStackTrace();
         }
+    }
+
+    private String loadUserId() throws Exception {
+        SharedPreferences sharedPref = getPreferences(MODE_PRIVATE);
+        String defaultValue = getString(R.string.no_user_id);
+        String userId = sharedPref.getString(getString(R.string.user_id), defaultValue);
+        Log.v("USERID", "The userId loaded from creating a prayer: " + userId);
+        if(userId.equals(defaultValue)){
+            throw new Exception("Couldn't load userId");
+        }
+        return userId;
     }
 
     private void showCreateCompleteMessage() {

@@ -97,9 +97,9 @@ public class MainActivity extends AppCompatActivity {
     private void setProfilePictureFromLocalStorage() {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         String defaultValue = getString(R.string.no_user_id);
-        String userId = sharedPref.getString(getString(R.string.user_id), defaultValue);
-        if(!userId.equals(defaultValue)){
-            profilePictureView.setProfileId(userId);
+        mUserId = sharedPref.getString(getString(R.string.user_id), defaultValue);
+        if(!mUserId.equals(defaultValue)){
+            profilePictureView.setProfileId(mUserId);
             btnCreateNewPrayer.setVisibility(View.VISIBLE);
             btnGetAllPrayers.setVisibility(View.VISIBLE);
             txtLoginMessage.setVisibility(View.GONE);
@@ -176,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToCreateNewPrayer() {
         Intent intent = new Intent(this, CreateNewPrayerActivity.class);
+        intent.putExtra(getString(R.string.user_id), mUserId);
         startActivity(intent);
     }
 

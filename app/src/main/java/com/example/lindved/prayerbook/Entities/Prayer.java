@@ -21,6 +21,7 @@ public class Prayer implements Serializable {
     private int mId;
     private String mSubject;
     private List<Response> mResponses;
+    private String mUserId;
 
     public Prayer(){
         mResponses = new ArrayList<>();
@@ -40,6 +41,14 @@ public class Prayer implements Serializable {
 
     public void setSubject(String subject){
         mSubject = subject;
+    }
+
+    public void setUserId(String userId){
+        mUserId = userId;
+    }
+
+    public String getUserId(){
+        return mUserId;
     }
 
     public void addResponse(String responsesString){

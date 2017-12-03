@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.lindved.prayerbook.Adapters.ResponseAdapter;
 import com.example.lindved.prayerbook.Entities.Prayer;
 import com.example.lindved.prayerbook.R;
+import com.facebook.login.widget.ProfilePictureView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +47,7 @@ public class SinglePrayerActivity extends AppCompatActivity {
     private TextView txtAnswerHeadline;
     private TextView txtSubject;
     private ImageView imgTrashcan;
+    private ProfilePictureView picProfile;
 
     private ResponseAdapter adapter;
 
@@ -79,14 +81,17 @@ public class SinglePrayerActivity extends AppCompatActivity {
                 try {
                     JSONObject object = new JSONObject(jsonData);
                     prayer = new Prayer();
-                    prayer.setId(object.getInt("id"));
-                    prayer.setSubject(object.getString("subject"));
+                    prayer.setId(object.getInt(getString(R.string.json_id)));
+                    prayer.setSubject(object.getString(getString(R.string.json_subject)));
                     prayer.addResponse(object.getString("responses"));
+                    prayer.setUserId(object.getString(getString(R.string.JSON_user_id)));
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             Log.v("TEST", prayer.toString());
                             txtSubject.setText(prayer.getSubject());
+                            picProfile.setProfileId(prayer.getUserId());
+                            picProfile.setVisibility(View.VISIBLE);
                             populateResponseList();
                             setAnswerHeadline();
                         }
@@ -143,6 +148,9 @@ public class SinglePrayerActivity extends AppCompatActivity {
         txtSubject.setMovementMethod(new ScrollingMovementMethod());
 
         lstResponses = findViewById(R.id.lstSinglePrayerAnswers);
+
+        picProfile = findViewById(R.id.picProfile);
+        picProfile.setVisibility(View.GONE);
     }
 
     private void warnDeleteDialog() {
