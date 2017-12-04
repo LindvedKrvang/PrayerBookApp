@@ -7,11 +7,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.example.lindved.prayerbook.Entities.Prayer;
 import com.example.lindved.prayerbook.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 /**
  * Created by Lindved on 05-11-2017.
@@ -20,22 +23,39 @@ import org.json.JSONObject;
 public class PrayerAdapter extends BaseAdapter {
 
     private Context mContext;
-    private JSONArray mPrayers;
+    private JSONArray mJSONPrayers;
+    private List<Prayer> mPrayers;
 
     public PrayerAdapter(Context context, JSONArray prayers){
         mContext = context;
-        mPrayers = prayers;
+        mJSONPrayers = prayers;
+    }
+
+    private void convertJSONPrayersToPrayers() throws JSONException {
+        for (int i = 0; i < mJSONPrayers.length(); i++){
+            Prayer prayer = new Prayer();
+            JSONObject jsonPrayer = mJSONPrayers.getJSONObject(i);
+            int id = Integer.parseInt(jsonPrayer.getString("id"));
+            prayer.setId(id);
+            prayer.setSubject(jsonPrayer.getString("subject"));
+            mPrayers.add(prayer);
+        }
     }
 
     @Override
     public int getCount() {
-        return mPrayers.length();
+        return mJSONPrayers.length();
     }
 
     @Override
-    public Object getItem(int position) {
+    public Prayer getItem(int position) {
         try{
-            return mPrayers.getJSONObject(position);
+            JSONObject jsonPrayer =  mJSONPrayers.getJSONObject(position);
+            int id = Integer.parseInt(jsonPrayer.getString(mContext.getString(R.string.json_id)));
+            Prayer prayer = new Prayer();
+            prayer.setId(id);
+            prayer.setSubject(jsonPrayer.getString(mContext.getString(R.string.json_subject)));
+            return prayer;
         }catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -54,8 +74,7 @@ public class PrayerAdapter extends BaseAdapter {
         if(view == null){
             view = LayoutInflater.from(mContext).inflate(R.layout.prayer_list_item, null);
             holder = new ViewHolder();
-            holder.idView = (TextView) view.findViewById(R.id.txtId);
-            holder.subjectView = (TextView) view.findViewById(R.id.txtSubject);
+            holder.subjectView = view.findViewById(R.id.txtSubject);
 
             view.setTag(holder);
         }else{
@@ -63,7 +82,7 @@ public class PrayerAdapter extends BaseAdapter {
         }
 
         try{
-            createPrayerView(holder, mPrayers.getJSONObject(position));
+            createPrayerView(holder, mJSONPrayers.getJSONObject(position));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -71,12 +90,10 @@ public class PrayerAdapter extends BaseAdapter {
     }
 
     private void createPrayerView(ViewHolder holder, JSONObject prayer) throws JSONException {
-        holder.idView.setText(prayer.getString("id"));
-        holder.subjectView.setText(prayer.getString("subject"));
+        holder.subjectView.setText(prayer.getString(mContext.getString(R.string.json_subject)));
     }
 
-    private static class ViewHolder{
-        TextView idView;
+    private static class ViewHolder{;
         TextView subjectView;
     }
 }
