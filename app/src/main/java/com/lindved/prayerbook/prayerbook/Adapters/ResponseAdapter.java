@@ -1,4 +1,4 @@
-package com.example.lindved.prayerbook.Adapters;
+package com.lindved.prayerbook.prayerbook.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.lindved.prayerbook.Entities.Response;
-import com.example.lindved.prayerbook.R;
+import com.lindved.prayerbook.prayerbook.Entities.Response;
+import com.lindved.prayerbook.prayerbook.R;
 import com.facebook.login.widget.ProfilePictureView;
 
 import java.util.List;

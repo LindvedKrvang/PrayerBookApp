@@ -1,8 +1,8 @@
-package com.example.lindved.prayerbook.Entities;
+package com.lindved.prayerbook.prayerbook.Entities;
 
 import android.util.Log;
 
-import com.example.lindved.prayerbook.R;
+import com.lindved.prayerbook.prayerbook.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

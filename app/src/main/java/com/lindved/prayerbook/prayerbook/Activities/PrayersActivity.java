@@ -1,4 +1,4 @@
-package com.example.lindved.prayerbook.Activities;
+package com.lindved.prayerbook.prayerbook.Activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,13 +12,12 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
-import com.example.lindved.prayerbook.Adapters.PrayerAdapter;
-import com.example.lindved.prayerbook.Entities.Prayer;
-import com.example.lindved.prayerbook.R;
+import com.lindved.prayerbook.prayerbook.Adapters.PrayerAdapter;
+import com.lindved.prayerbook.prayerbook.Entities.Prayer;
+import com.lindved.prayerbook.prayerbook.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 

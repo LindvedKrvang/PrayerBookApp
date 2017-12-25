@@ -1,10 +1,8 @@
-package com.example.lindved.prayerbook.Activities;
+package com.lindved.prayerbook.prayerbook.Activities;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,12 +17,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.lindved.prayerbook.Adapters.ResponseAdapter;
-import com.example.lindved.prayerbook.Entities.Prayer;
-import com.example.lindved.prayerbook.R;
+import com.lindved.prayerbook.prayerbook.Adapters.ResponseAdapter;
+import com.lindved.prayerbook.prayerbook.Entities.Prayer;
+import com.lindved.prayerbook.prayerbook.R;
 import com.facebook.login.widget.ProfilePictureView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,7 +34,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.example.lindved.prayerbook.Activities.CreateNewPrayerActivity.JSON;
+import static com.lindved.prayerbook.prayerbook.Activities.CreateNewPrayerActivity.JSON;
 
 public class SinglePrayerActivity extends AppCompatActivity {
 

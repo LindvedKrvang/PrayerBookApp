@@ -1,4 +1,4 @@
-package com.example.lindved.prayerbook.Adapters;
+package com.lindved.prayerbook.prayerbook.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.lindved.prayerbook.Entities.Prayer;
-import com.example.lindved.prayerbook.R;
+import com.lindved.prayerbook.prayerbook.Entities.Prayer;
+import com.lindved.prayerbook.prayerbook.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

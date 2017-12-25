@@ -1,4 +1,4 @@
-package com.example.lindved.prayerbook.Entities;
+package com.lindved.prayerbook.prayerbook.Entities;
 
 /**
  * Created by Lindved on 25-11-2017.

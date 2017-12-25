@@ -1,4 +1,4 @@
-package com.example.lindved.prayerbook;
+package com.lindved.prayerbook.prayerbook;
 
 import org.junit.Test;
 

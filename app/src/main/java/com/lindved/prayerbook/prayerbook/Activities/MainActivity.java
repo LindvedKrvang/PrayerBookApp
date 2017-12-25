@@ -1,4 +1,4 @@
-package com.example.lindved.prayerbook.Activities;
+package com.lindved.prayerbook.prayerbook.Activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,21 +21,15 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.appevents.AppEventsLogger;
 
-import com.example.lindved.prayerbook.R;
-import com.facebook.login.LoginManager;
+import com.lindved.prayerbook.prayerbook.R;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.widget.ProfilePictureView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,6 +48,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo("com.lindved.prayerbook", PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("KeyHash:", e.toString());
+        } catch (NoSuchAlgorithmException e) {
+            Log.e("KeyHash:", e.toString());
+        }
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         mCallbackManager = CallbackManager.Factory.create();
