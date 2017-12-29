@@ -1,6 +1,9 @@
 package com.lindved.prayerbook.prayerbook.Activities;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
@@ -27,7 +30,6 @@ import okhttp3.Response;
 public class CreateNewPrayerActivity extends AppCompatActivity {
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-//    private static final String prayerURL = "http://prayerbook.azurewebsites.net/api/prayers";
 
     private Button btnCreatePrayer;
     private Button btnBack;
@@ -42,9 +44,14 @@ public class CreateNewPrayerActivity extends AppCompatActivity {
 
         mUserId = getIntent().getExtras().getString(getString(R.string.user_id));
 
-        Log.v("TEST", "This is the userId parsed from the intent: " + mUserId);
         initialize();
         setListeners();
+    }
+
+    private void initialize() {
+        btnCreatePrayer = findViewById(R.id.btnNewPrayerCreate);
+        btnBack = findViewById(R.id.btnNewPrayerBack);
+        txtSubject = findViewById(R.id.txtNewPrayerSubject);
     }
 
     private void setListeners() {
@@ -52,12 +59,7 @@ public class CreateNewPrayerActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        createPrayer();
-                    }
-                }).start();
+                handleCreatePrayerButton();
             }
         });
 
@@ -69,74 +71,83 @@ public class CreateNewPrayerActivity extends AppCompatActivity {
         });
     }
 
+    private void handleCreatePrayerButton(){
+        if(!isSubjectPresent()){
+            displayToast(getString(R.string.enter_subject));
+            return;
+        }
+        if(isNetworkAvailable()){
+            displayToast(getString(R.string.creating_prayer));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    createPrayer();
+                }
+            }).start();
+        }else{
+            displayToast(getString(R.string.no_network_available));
+        }
+    }
+
+    private boolean isSubjectPresent(){
+        String subject = txtSubject.getText().toString();
+        if(subject.isEmpty()){
+            return false;
+        }
+        return true;
+    }
+
     private String getSubject(){
-        //TODO RKL: Make validating so there always are content in the subject.
         String subject = txtSubject.getText().toString();
         return subject;
     }
 
     private void createPrayer() {
-        OkHttpClient client = new OkHttpClient();
 
-//        String userId;
-//        try {
-//            userId = loadUserId();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            //TODO RKL: Notice user about error.
-//            return;
-//        }
+            OkHttpClient client = new OkHttpClient();
+            JSONObject prayer = new JSONObject();
 
-        JSONObject prayer = new JSONObject();
-        try {
-            prayer.put(getString(R.string.json_subject), getSubject());
-            prayer.put(getString(R.string.user_id), mUserId);
-        } catch (JSONException e) {
-            Log.v("TEST", "Create JSON exception");
-            e.printStackTrace();
-        }
-        RequestBody body = RequestBody.create(JSON, prayer.toString());
-        Log.v("TEST", "RequestBody created");
+            try {
+                prayer.put(getString(R.string.json_subject), getSubject());
+                prayer.put(getString(R.string.user_id), mUserId);
+            } catch (JSONException e) {
+                Log.e(getString(R.string.error_creating_prayer), getString(R.string.create_json_exception));
+                e.printStackTrace();
+            }
 
-        Request request = new Request.Builder().url(getString(R.string.prayerURL)).post(body).build();
+            RequestBody body = RequestBody.create(JSON, prayer.toString());
+            Request request = new Request.Builder().url(getString(R.string.prayerURL)).post(body).build();
 
-        try {
-            Response response = client.newCall(request).execute();
-            Log.v("TEST", "Request done. Got the response");
-            Log.v("TEST", response.body().string());
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    txtSubject.getText().clear();
-                    showCreateCompleteMessage();
+            try {
+                Response response = client.newCall(request).execute();
+                if(response.isSuccessful()){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            txtSubject.getText().clear();
+                            displayToast(getString(R.string.create_prayer_success));
+                        }
+                    });
                 }
-            });
-        } catch (IOException e) {
-            Log.v("TEST", "Exception while doing request");
-            e.printStackTrace();
-        }
+            } catch (IOException e) {
+                Log.e(getString(R.string.error_response), getString(R.string.request_exception));
+                e.printStackTrace();
+            }
+
     }
 
-    private String loadUserId() throws Exception {
-        SharedPreferences sharedPref = getPreferences(MODE_PRIVATE);
-        String defaultValue = getString(R.string.no_user_id);
-        String userId = sharedPref.getString(getString(R.string.user_id), defaultValue);
-        Log.v("USERID", "The userId loaded from creating a prayer: " + userId);
-        if(userId.equals(defaultValue)){
-            throw new Exception("Couldn't load userId");
-        }
-        return userId;
-    }
-
-    private void showCreateCompleteMessage() {
-        Toast toast = Toast.makeText(this, "Successfully created prayer!", Toast.LENGTH_SHORT);
+    private void displayToast(String message){
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
         toast.show();
     }
 
-    private void initialize() {
-        btnCreatePrayer = findViewById(R.id.btnNewPrayerCreate);
-        btnBack = findViewById(R.id.btnNewPrayerBack);
-        txtSubject = findViewById(R.id.txtNewPrayerSubject);
+    private boolean isNetworkAvailable(){
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected()){
+            return true;
+        }
+        return false;
     }
 
     @Override
