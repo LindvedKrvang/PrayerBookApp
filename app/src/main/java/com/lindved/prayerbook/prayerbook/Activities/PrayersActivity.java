@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.lindved.prayerbook.prayerbook.Adapters.PrayerAdapter;
 import com.lindved.prayerbook.prayerbook.Entities.Prayer;
@@ -28,8 +29,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class PrayersActivity extends AppCompatActivity {
-
-//    private static String prayersURL = "http://prayerbook.azurewebsites.net/api/prayers";
 
     private ListView lstPrayers;
     private Button btnGetPrayers;
@@ -56,26 +55,23 @@ public class PrayersActivity extends AppCompatActivity {
     }
 
     private void initialize() {
-        lstPrayers = (ListView) findViewById(R.id.lstPrayers);
+        lstPrayers = findViewById(R.id.lstPrayers);
         lstPrayers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Prayer prayer = (Prayer) parent.getItemAtPosition(position);
-
-                Log.v("TEST", prayer.getSubject());
-
                 goToSinglePrayerActivity(prayer);
             }
         });
 
-        btnGetPrayers = (Button) findViewById(R.id.btnGetPrayers);
+        btnGetPrayers = findViewById(R.id.btnGetPrayers);
         btnGetPrayers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getPrayers();
             }
         });
-        btnBack = (Button) findViewById(R.id.btnPrayersBack);
+        btnBack = findViewById(R.id.btnPrayersBack);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,6 +89,7 @@ public class PrayersActivity extends AppCompatActivity {
 
     private void getPrayers(){
         if(isNetworkAvailable()){
+            displayToast(getString(R.string.getting_prayers));
 
             OkHttpClient client = new OkHttpClient();
             final Request request = new Request.Builder().url(getString(R.string.prayerURL)).build();
@@ -102,23 +99,21 @@ public class PrayersActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call call, IOException e) {
                     alertUserAboutError();
-                    Log.v("TEST", "Response failed");
                 }
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     final String jsonData = response.body().string();
-                    Log.v("TEST", jsonData);
                     if(response.isSuccessful()){
-                        Log.v("TEST", "Response is successful");
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 try {
                                     displayPrayers(jsonData);
+                                    displayToast(getString(R.string.get_prayers_successfull));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                    Log.v("TEST", "Failed to display prayers");
+                                    displayToast(getString(R.string.get_prayers_failed));
                                 }
                             }
                         });
@@ -126,8 +121,7 @@ public class PrayersActivity extends AppCompatActivity {
                 }
             });
         }else{
-            //TODO RKL: Show a message to the user explaining there is no internet.
-            Log.v("TEST", "Network isn't available");
+            displayToast(getString(R.string.no_network_available));
         }
     }
 
@@ -139,7 +133,12 @@ public class PrayersActivity extends AppCompatActivity {
     }
 
     private void alertUserAboutError() {
-        //TODO RKL: Create a message to the user about the error.
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                displayToast(getString(R.string.get_prayers_failed));
+            }
+        });
     }
 
     private boolean isNetworkAvailable(){
@@ -149,6 +148,11 @@ public class PrayersActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    private void displayToast(String message){
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     @Override
